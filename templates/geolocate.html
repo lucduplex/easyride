@@ -1,0 +1,107 @@
+{% extends "base.html" %} {%load static%} {% block title %}EasyRide - Transport
+rapide et sécurisé{% endblock %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Géolocalisation</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdS-b3HBY7uprOXdV34wTgYJW1tSWGn0s&callback=initMap"
+      async
+      defer
+    ></script>
+    <style>
+      #map {
+        height: 400px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2>Votre position actuelle</h2>
+      <button class="btn btn-primary" onclick="getLocation()">
+        Obtenir ma position
+      </button>
+      <p id="location"></p>
+      <div id="map"></div>
+    </div>
+
+    <script>
+      let map, marker;
+
+      function initMap() {
+        const defaultLocation = { lat: -34.397, lng: 150.644 };
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: defaultLocation,
+          zoom: 6,
+        });
+        marker = new google.maps.Marker({
+          position: defaultLocation,
+          map: map,
+        });
+      }
+
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+          document.getElementById("location").innerHTML =
+            "La géolocalisation n'est pas prise en charge par ce navigateur.";
+        }
+      }
+
+      function showPosition(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const userLocation = { lat: latitude, lng: longitude };
+
+        // Mise à jour de la carte et du marqueur
+        map.setCenter(userLocation);
+        map.setZoom(15);
+        marker.setPosition(userLocation);
+
+        fetch("/geolocate/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: `latitude=${latitude}&longitude=${longitude}`,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("location").innerHTML =
+              "Adresse: " + data.address;
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+
+      function showError(error) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            document.getElementById("location").innerHTML =
+              "L'utilisateur a refusé la demande de géolocalisation.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            document.getElementById("location").innerHTML =
+              "Les informations de localisation ne sont pas disponibles.";
+            break;
+          case error.TIMEOUT:
+            document.getElementById("location").innerHTML =
+              "La demande de localisation a expiré.";
+            break;
+          case error.UNKNOWN_ERROR:
+            document.getElementById("location").innerHTML =
+              "Une erreur inconnue s'est produite.";
+            break;
+        }
+      }
+    </script>
+  </body>
+</html>
+{% endblock %}

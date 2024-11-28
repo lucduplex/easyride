@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<!-- Style -->
+<style>
+    body {
+        background: 
+        linear-gradient(57deg, #1E88E5 35%, #1565C0 25%),  /* Light Blue to Medium Blue */
+            linear-gradient(23deg, #42A5F5 60%, #0D47A1 60%),  /* Medium Blue to Dark Blue */
+            linear-gradient(135deg, #00ACC1 80%, #2196F3 80%); /* Cyan to Bright Blue */
+    }
+</style>
+
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Connexion</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Section pour afficher les messages d'erreur -->
+                    {% if messages %}
+                        <div class="mb-3">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show error-text" role="alert" style="color: red">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Champ nom d'utilisateur -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nom d'utilisateur</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                            <div class="invalid-feedback">Veuillez entrer votre nom d'utilisateur.</div>
+                        </div>
+
+                        <!-- Champ mot de passe -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="invalid-feedback">Veuillez entrer votre mot de passe.</div>
+                        </div>
+
+                        <!-- Capture vidéo -->
+                        <div class="mb-3 text-center">
+                            <video id="video" class="border" width="320" height="240" autoplay></video>
+                            <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <!-- Bouton pour capturer une image du visage -->
+                            <button type="button" class="btn btn-warning mb-3" onclick="captureImage()">
+                                <i class="bi bi-camera"></i> Capturer une image
+                            </button>
+                            <!-- Champ caché pour envoyer l'image capturée -->
+                            <input type="file" id="face_id" name="face_id" accept="image/*" style="display: none;" required>
+                            <div class="invalid-feedback">Veuillez capturer une image pour vous connecter.</div>
+                        </div>
+
+                        <!-- Soumission du formulaire -->
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary" id="submit-btn">
+                                <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Bouton d'inscription si l'utilisateur n'a pas de compte -->
+                    <div class="text-center mt-4">
+                        <p>Vous n'avez pas de compte ?</p>
+                        <a class="btn btn-secondary" href="{% url 'signup' %}">
+                            <i class="bi bi-person-plus"></i> S'inscrire
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Activation de la webcam pour capturer l'image de FaceID
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then((stream) => {
+        document.getElementById('video').srcObject = stream;
+    })
+    .catch((error) => {
+        console.error("Erreur lors de l'accès à la webcam : ", error);
+    });
+
+function captureImage() {
+    const canvas = document.getElementById('canvas');
+    const video = document.getElementById('video');
+    const faceImageInput = document.getElementById('face_id');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // Capture l'image de la vidéo et la dessine sur le canvas
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convertir l'image du canvas en blob
+    canvas.toBlob((blob) => {
+        const file = new File([blob], "face_image.jpg", { type: "image/jpeg" });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        faceImageInput.files = dataTransfer.files;
+
+        // Afficher une alerte si la capture a réussi et activer le bouton de soumission
+        if (faceImageInput.files.length > 0) {
+            submitBtn.disabled = false;
+            alert("Image capturée avec succès !");
+        } else {
+            submitBtn.disabled = true;
+            alert("Erreur lors de la capture de l'image.");
+        }
+    });
+}
+</script>
+{% endblock %}

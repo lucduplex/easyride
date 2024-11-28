@@ -1,0 +1,187 @@
+/* Styles de base */
+body {
+    background-color: #f4f4f4; /* Gris clair pour un effet propre */
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* Style pour les backgrounds clairs */
+.bg-light {
+    background-color: #f8f8f8 !important;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #333; /* Couleur sombre pour le contraste */
+    color: #fff;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #fff !important;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    color: #fff !important;
+    font-size: 16px;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+/* Boutons avec styles et hover */
+.btn {
+    margin-left: 10px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    border-radius: 25px;
+    padding: 10px 20px;
+}
+
+/* Bouton primaire */
+.btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Bouton secondaire */
+.btn-outline-secondary {
+    color: #666;
+    border-color: #666;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #666;
+    color: #fff;
+}
+/* Footer */
+footer {
+    background-color: #333;
+    color: #fff;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.footer-logo {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Hover zoom effet sur les éléments */
+.hover-zoom:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Style des cartes */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-img-top {
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+/* Amélioration du style général des boutons */
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.error-text {
+    color: red !important;
+}
+
+
+
+/* CSS pour acceuil */
+.split {
+    height: 99%;
+    width: 50%;
+    position: relative;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    padding-top: 50px;
+  }
+  
+  .centered {
+      float: left;
+    position: relative;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: left;
+  }
+
+  .input-group {
+      position: relative;
+      margin: 20px 0;
+  }
+
+  .input-group label {
+      position: absolute;
+      top: 50%;
+      left: 5px;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: black;
+      padding: 0 5px;
+      pointer-events: none;
+  }
+
+  .input-group input {
+      width: 320px;
+      height: 40px;
+      font-size: 16px;
+      color: black;
+      padding: 0 10px;
+      background: transparent;
+      border: 1.2px solid black;
+      outline: none;
+      border-radius: 5px;
+  }
+
+  .input-group input:focus~label,
+  .input-group input:valid~label {
+      top: 0;
+      font-size: 12px;
+      background: #fff;
+  }
+/* 
+  .img-cl {
+      margin-top: -650;
+      float: right;
+      width: 600px;
+  } */
+
+  .table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.alert {
+    font-size: 1.1rem;
+}
+
+h2.fw-bold {
+    color: #343a40;
+}
+
+.text-muted {
+    font-size: 1rem;
+}

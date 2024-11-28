@@ -1,0 +1,13 @@
+<!-- confirm_delete.html -->
+{% extends "base.html" %} {% block title %}Confirmer la Suppression{% endblock
+%} {% block content %}
+<div class="container mt-5">
+  <h2 class="text-center">Supprimer {{ order_type|capfirst }}</h2>
+  <p>Êtes-vous sûr de vouloir supprimer cette {{ order_type }} ?</p>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <a href="{% url 'my_orders' %}" class="btn btn-secondary">Annuler</a>
+  </form>
+</div>
+{% endblock %}

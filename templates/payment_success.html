@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}EasyRide - Paiement réussi{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-success text-white text-center">
+            <h1 class="card-title">Paiement Confirmé !</h1>
+            <p class="card-text">Merci pour votre réservation avec EasyRide.</p>
+        </div>
+        <div class="card-body">
+            <h4 class="text-primary">Détails de votre réservation</h4>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Départ :</strong> {{ ride.pickup }}</li>
+                <li class="list-group-item"><strong>Destination :</strong> {{ ride.destination }}</li>
+                {% if type == "reservation" %}
+    <li class="list-group-item"><strong>Date :</strong> {{ ride.date|date:"d/m/Y" }}</li>
+    <li class="list-group-item"><strong>Heure :</strong> {{ ride.time|time:"H:i" }}</li>
+{% else %}
+    <li class="list-group-item"><strong>Date et Heure de reservation :</strong> {{ ride.datetime| date:"d/m/Y H:i" }}GMT</li>
+    
+{% endif %}
+
+                <li class="list-group-item"><strong>E-mail de confirmation :</strong> {{ ride.user.email }}</li>
+            </ul>
+            <div class="text-center mt-4">
+                <a href="/" class="btn btn-success btn-lg">Retour à l'accueil</a>
+            </div>
+        </div>
+        <div class="card-footer text-muted text-center">
+            Merci d'avoir choisi EasyRide pour votre trajet&nbsp;!
+        </div>
+    </div>
+</div>
+{% endblock %}

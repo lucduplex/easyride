@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+<!-- jQuery and Mask Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <!-- Left side with logo -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="text-center">
+                <img src="{% static 'images/taxi_logo.png' %}" alt="Taxi Logo" class="img-fluid" style="width: 550px; height: 600px; margin-top: -100">
+            </div>
+        </div>
+
+        <!-- Right Side with form -->
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Inscription</h4>
+                </div>
+                <div class="card-body" style="overflow:scroll; height: 600px;">
+                    <form id="signup-form" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        {% comment %} <!-- Gestion des erreurs générales du formulaire -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %} {% endcomment %}
+
+                        <!-- Section pour afficher les messages d'erreur -->
+                        {% if messages %}
+                        <div class="mb-3">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show error-text" role="alert" style="color: red">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Champ nom d'utilisateur -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nom d'utilisateur</label>
+                            <input type="text" class="form-control {% if form.username.errors %}is-invalid{% elif form.username.value %}is-valid{% endif %}" id="username" name="username" required>
+                            <div class="invalid-feedback">
+                                {{ form.username.errors|striptags }} <!-- Affichage des erreurs pour ce champ -->
+                            </div>
+                        </div>
+
+                        <!-- Champ courriel -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Courriel</label>
+                            <input type="email" class="form-control {% if form.email.errors %}is-invalid{% elif form.email.value %}is-valid{% endif %}" id="email" name="email" required>
+                            <div class="invalid-feedback">
+                                {{ form.email.errors|striptags }}
+                            </div>
+                        </div>
+
+                        <!-- Champ numéro de mobile -->
+                        <div class="mb-3">
+                            <label for="cell" class="form-label">Numéro de téléphone</label>
+                            <input type="text" class="form-control {% if form.cell.errors %}is-invalid{% elif form.cell.value %}is-valid{% endif %}" id="cell" name="cell" required>
+                            <div class="invalid-feedback">
+                                {{ form.cell.errors|striptags }}
+                            </div>
+                        </div>
+
+                        <!-- Champ adresse -->
+                        <div class="mb-3">
+                            <label for="cell" class="form-label">Adresse</label>
+                            <input type="text" class="form-control {% if form.address.errors %}is-invalid{% elif form.address.value %}is-valid{% endif %}" id="address" name="address" required>
+                            <div class="invalid-feedback">
+                                {{ form.address.errors|striptags }}
+                            </div>
+                        </div>
+
+                        <!-- Champ mot de passe -->
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">Mot de passe</label>
+                            <input type="password" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" id="password1" name="password1" required>
+                            <div class="invalid-feedback">
+                                {{ form.password1.errors|striptags }}
+                            </div>
+                        </div>
+
+                        <!-- Confirmation mot de passe -->
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Confirmer le mot de passe</label>
+                            <input type="password" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" id="password2" name="password2" required>
+                            <div class="invalid-feedback">
+                                {{ form.password2.errors|striptags }}
+                            </div>
+                        </div>
+
+                        <!-- FaceID : Téléverser ou Prendre une photo -->
+                        <div class="mb-3">
+                            <label for="method-select" class="form-label">Photo de FaceID :</label>
+                            <select class="form-select" id="method-select" onchange="toggleMethod()">
+                                <option value="upload">Téléverser une image</option>
+                                <option value="capture">Prendre une photo avec la webcam</option>
+                            </select>
+                        </div>
+
+                        <!-- Téléverser une image -->
+                        <div id="upload-section" class="mb-3">
+                            <label for="face_id" class="form-label">Téléverser une image</label>
+                            <input type="file" class="form-control {% if form.face_id.errors %}is-invalid{% endif %}" id="face_id" name="face_id" accept="image/*">
+                            <div class="invalid-feedback">
+                                {{ form.face_id.errors|striptags }}
+                            </div>
+                        </div>
+
+                        <!-- Prendre une photo avec la webcam -->
+                        <div id="capture-section" class="mb-3" style="display: none;">
+                            <label for="video" class="form-label d-block text-center">Prendre une photo avec la webcam</label>
+                            <div class="d-flex justify-content-center">
+                                <video id="video" class="border mb-3" width="320" height="240" autoplay></video>
+                                <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-warning mb-3" onclick="captureImage()">
+                                    <i class="bi bi-camera"></i> Capturer une image
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Soumission du formulaire -->
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-in-right"></i> S'inscrire
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: 
+            linear-gradient(23deg, #42A5F5 60%, #0D47A1 60%),  /* Medium Blue to Dark Blue */
+            linear-gradient(135deg, #00ACC1 80%, #2196F3 80%); /* Cyan to Bright Blue */
+    }
+
+    .container {
+        background-color: #1E88E5;
+        border-radius: 15px;
+        padding: 20px;
+    }
+</style>
+
+
+<script>
+// JavaScript pour gérer l'upload ou la capture d'image pour FaceID
+function toggleMethod() {
+    const methodSelect = document.getElementById('method-select');
+    const uploadSection = document.getElementById('upload-section');
+    const captureSection = document.getElementById('capture-section');
+
+    if (methodSelect.value === 'upload') {
+        uploadSection.style.display = 'block';
+        captureSection.style.display = 'none';
+    } else {
+        uploadSection.style.display = 'none';
+        captureSection.style.display = 'block';
+    }
+}
+
+// Fonction pour capturer l'image depuis la webcam
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then((stream) => {
+        document.getElementById('video').srcObject = stream;
+    });
+
+function captureImage() {
+    const canvas = document.getElementById('canvas');
+    const video = document.getElementById('video');
+    const faceImageInput = document.getElementById('face_id');
+
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => {
+        const file = new File([blob], "face_image.jpg", { type: "image/jpeg" });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        faceImageInput.files = dataTransfer.files;
+    });
+}
+
+// Validation du formulaire côté client
+(function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+
+// Apply mask to the phone number field
+$(document).ready(function(){
+    $('#cell').mask('(999) 999-9999');  // This applies the mask "(514) 111-1111"
+});
+</script>
+{% endblock %}

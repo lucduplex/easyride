@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}EasyRide - Transport rapide et sécurisé{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <!-- Titre et description -->
+  <div class="text-center mb-4">
+    <h2 class="text-primary">Réservez ou commandez une course</h2>
+    <p class="text-muted">
+      Choisissez de commander une course immédiatement ou de la planifier pour plus tard.
+    </p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Formulaire de commande de course -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center">
+          <h5 class="mb-0">Commander une Course maintenant</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'order_ride' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="pickup" class="form-label">Adresse de départ</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="pickup"
+                  name="pickup"
+                  placeholder="Entrez votre adresse de départ"
+                  required
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  onclick="useCurrentLocation('pickup')"
+                >
+                  <i class="fas fa-map-marker-alt"></i> Ma position
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="destination" class="form-label">Adresse de destination</label>
+              <input
+                type="text"
+                class="form-control"
+                id="destination"
+                name="destination"
+                placeholder="Entrez votre destination"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Commander</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire de réservation -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-success text-white text-center">
+          <h5 class="mb-0">Réserver une Course pour plus tard</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'reservation' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="depart" class="form-label">Adresse de départ</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="depart"
+                  name="depart"
+                  placeholder="Entrez votre adresse de départ"
+                  required
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-success"
+                  onclick="useCurrentLocation('depart')"
+                >
+                  <i class="fas fa-map-marker-alt"></i> Ma position
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="destination" class="form-label">Adresse de destination</label>
+              <input
+                type="text"
+                class="form-control"
+                id="destination"
+                name="destination"
+                placeholder="Entrez votre destination"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="date" class="form-label">Date de réservation</label>
+              <input
+              type="date"
+              class="form-control"
+              id="date"
+              name="date"
+              min="{{ date_today }}"
+              max="2100-12-31"
+              required
+          />
+          
+            </div>
+            <div class="mb-3">
+              <label for="time" class="form-label">Heure de réservation</label>
+              <input
+                type="time"
+                class="form-control"
+                id="time"
+                name="time"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-success w-100">Réserver</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carte -->
+  <div class="mt-5">
+    <h5 class="text-center text-muted">Voir votre position actuelle</h5>
+    <div id="map" class="border rounded shadow-sm"></div>
+  </div>
+</div>
+
+<script>
+  function getLocation(callback) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(callback, showError);
+    } else {
+      alert("La géolocalisation n'est pas prise en charge par ce navigateur.");
+    }
+  }
+
+  function useCurrentLocation(inputId) {
+    getLocation(function (position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      fetch("/geolocate/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: `latitude=${latitude}&longitude=${longitude}`,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById(inputId).value = data.address;
+        })
+        .catch((error) => console.error("Erreur:", error));
+    });
+  }
+
+  function showError(error) {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        alert("L'utilisateur a refusé la demande de géolocalisation.");
+        break;
+      case error.POSITION_UNAVAILABLE:
+        alert("Les informations de localisation ne sont pas disponibles.");
+        break;
+      case error.TIMEOUT:
+        alert("La demande de localisation a expiré.");
+        break;
+      case error.UNKNOWN_ERROR:
+        alert("Une erreur inconnue s'est produite.");
+        break;
+    }
+  }
+</script>
+{% endblock %}

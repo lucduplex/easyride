@@ -1,0 +1,27 @@
+<div class="container mt-5">
+  <h2 class="text-center text-primary mb-4">Vos Courses</h2>
+  
+  {% if orders %}
+    <div class="row g-3">
+      {% for order in orders %}
+        <div class="col-md-6">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <h5 class="card-title text-primary">Course</h5>
+              <p class="card-text">
+                <strong>De :</strong> {{ order.pickup }}<br>
+                <strong>À :</strong> {{ order.destination }}<br>
+                <strong>Date et Heure :</strong> {{ order.datetime|date:"d/m/Y H:i" }}GMT<br>
+              </p>
+              <span class="badge bg-info text-dark">Statut : {{ order.status }}</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-warning text-center" role="alert">
+      Aucun enregistrement trouvé.
+    </div>
+  {% endif %}
+</div>

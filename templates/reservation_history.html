@@ -1,0 +1,45 @@
+{% load static %}
+{% block content %}
+{% if success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Succès !</strong> {{ success }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endif %}
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Historique de vos réservations</h2>
+        <p class="text-muted">Voici toutes vos réservations futures.</p>
+    </div>
+
+    {% if reservations %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date de départ</th>
+                        <th>Heure</th>
+                        <th>Départ</th>
+                        <th>Destination</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                        <tr>
+                            <td>{{ reservation.date }}</td>
+                            <td>{{ reservation.time }}</td>
+                            <td>{{ reservation.pickup }}</td>
+                            <td>{{ reservation.destination }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <p>Vous n'avez aucune réservation pour le moment.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

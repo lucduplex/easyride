@@ -1,0 +1,83 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #navigation-form {
+            margin-bottom: 20px;
+        }
+        .info-box {
+            margin-top: 20px;
+        }
+        .step {
+            margin-left: 20px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Navigation avec Google Maps</h1>
+    
+    <div id="navigation-form">
+        <label for="origin">Origine:</label>
+        <input type="text" id="origin" placeholder="Entrez le point de départ">
+        
+        <label for="destination">Destination:</label>
+        <input type="text" id="destination" placeholder="Entrez la destination">
+        
+        <button id="get-directions">Obtenir les directions</button>
+    </div>
+    
+    <div id="results" class="info-box">
+        <h2>Informations de Navigation</h2>
+        <div id="distance"></div>
+        <div id="duration"></div>
+        <div id="steps">
+            <h3>Étapes</h3>
+            <div id="steps-list"></div>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            $("#get-directions").click(function() {
+                const origin = $("#origin").val();
+                const destination = $("#destination").val();
+                
+                if (!origin || !destination) {
+                    alert("Veuillez entrer une origine et une destination.");
+                    return;
+                }
+
+                $.ajax({
+                    url: "/navigation/",  
+                    data: { origin: origin, destination: destination },
+                    success: function(data) {
+                        $("#distance").text("Distance: " + data.distance);
+                        $("#duration").text("Durée: " + data.duration);
+
+                        const stepsList = $("#steps-list");
+                        stepsList.empty();  // Vider la liste des étapes
+
+                        data.steps.forEach(step => {
+                            stepsList.append("<div class='step'>" + step.html_instructions + "</div>");
+                        });
+                    },
+                    error: function() {
+                        alert("Erreur lors de la récupération des données de navigation.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!-- edit_order.html -->
+{% extends "base.html" %} {% block title %}Modifier la Commande/Réservation{%
+endblock %} {% block content %}
+<div class="container mt-5">
+  <h2 class="text-center">Modifier {{ order_type|capfirst }}</h2>
+  <form method="POST">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+  </form>
+</div>
+
+{% endblock %}

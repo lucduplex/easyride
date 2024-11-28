@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2 class="text-center text-success">Réservation Confirmée</h2>
+  <p class="text-center">
+    Votre réservation a été confirmée avec succès. Merci d'avoir utilisé
+    EasyRide !
+  </p>
+  <a
+    href="{% url 'home' %}"
+    class="btn btn-primary d-block mx-auto mt-4"
+    style="width: 200px"
+    >Retour à l'accueil</a
+  >
+</div>
+{% endblock %}

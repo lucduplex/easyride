@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}EasyRide - Transport rapide et sécurisé{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center text-primary">Choisissez votre véhicule</h2>
+  <div class="row">
+    <!-- Carte Google Maps -->
+    <div class="col-md-12">
+      <div id="map"></div>
+    </div>
+
+    <!-- Liste des types de véhicules -->
+    <div class="col-md-12 mt-4">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <input
+            type="radio"
+            name="vehicle"
+            id="vehicle_simple"
+            value="price_simple"
+            onchange="updatePrice('{{ price_simple }}')"
+          />
+          <label for="vehicle_simple">Véhicule Simple</label>
+          <span class="badge badge-primary float-right">{{ price_simple }}$</span>
+        </li>
+        <li class="list-group-item">
+          <input
+            type="radio"
+            name="vehicle"
+            id="vehicle_xl"
+            value="xl"
+            onchange="updatePrice('{{ price_xl }}')"
+          />
+          <label for="vehicle_xl">Véhicule XL</label>
+          <span class="badge badge-primary float-right">{{ price_xl }}$</span>
+        </li>
+        <li class="list-group-item">
+          <input
+            type="radio"
+            name="vehicle"
+            id="vehicle_comfort"
+            value="comfort"
+            onchange="updatePrice('{{ price_comfort }}')"
+          />
+          <label for="vehicle_comfort">Véhicule Comfort</label>
+          <span class="badge badge-primary float-right">{{ price_comfort }}$</span>
+        </li>
+      </ul>
+
+      <!-- Section pour afficher le prix sélectionné -->
+      <div class="mt-4">
+        <h4>Prix total : <span id="selected-price" class="text-primary">0$</span></h4>
+      </div>
+
+      <!-- Bouton de paiement Stripe -->
+      <button id="checkout-button" class="btn btn-success btn-block mt-4">
+        Payer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Styles et scripts -->
+<style>
+  #map {
+    height: 400px;
+    width: 100%;
+    border-radius: 8px;
+  }
+</style>
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key={{key}}"
+  async
+  defer
+></script>
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+  let map, directionsService, directionsRenderer;
+
+  function initMap() {
+    // Initialisation de Google Maps
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+
+    map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 7,
+      center: { lat: 48.8566, lng: 2.3522 }, // Coordonnées par défaut (Paris)
+    });
+
+    directionsRenderer.setMap(map);
+
+    // Calculer l'itinéraire après l'initialisation de la carte
+    calculateAndDisplayRoute();
+  }
+
+  function calculateAndDisplayRoute() {
+    directionsService.route(
+      {
+        origin: "{{ ride.pickup|escapejs }}",
+        destination: "{{ ride.destination|escapejs }}",
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === "OK") {
+          directionsRenderer.setDirections(response);
+        } else {
+          alert("Erreur lors de la génération de l'itinéraire : " + status);
+        }
+      }
+    );
+  }
+  function updatePrice(price) {
+    // Mettre à jour le prix sélectionné
+    document.getElementById("selected-price").innerText = price + "$";
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const stripe = Stripe("{{ stripe_public_key }}");
+
+    document.getElementById("checkout-button").addEventListener("click", function () {
+      // Vérifier le véhicule sélectionné
+      const selectedVehicle = document.querySelector('input[name="vehicle"]:checked');
+      if (!selectedVehicle) {
+        alert("Veuillez sélectionner un type de véhicule !");
+        return;
+      }
+
+      // Rediriger vers la session Stripe
+      stripe
+        .redirectToCheckout({
+          sessionId: "{{ stripe_session_id }}", 
+        })
+        .then(function (result) {
+          if (result.error) {
+            alert(result.error.message);
+          }
+        });
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2 class="text-center text-primary">Suivi des véhicules en temps réel</h2>
+  <div id="map" style="height: 500px; width: 100%"></div>
+</div>
+
+<!-- Google Maps JavaScript API avec callback pour initMap -->
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlCaWecwieHtFdAIJfExsVpvghyez573k
+
+&callback=initMap"
+  async
+  defer
+></script>
+
+<script>
+  function initMap() {
+    // Centre initial de la carte
+    var centerCanada = { lat: 56.1304, lng: -106.3468 };
+    var map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 4,
+      center: centerCanada,
+    });
+
+    var vehicleMarkers = {};
+
+    function updateVehiclePositions() {
+      fetch("{% url 'vehicle_tracking' %}")
+        .then((response) => response.json())
+        .then((data) => {
+          data.vehicles.forEach((vehicle) => {
+            var position = { lat: vehicle.lat, lng: vehicle.lng };
+            if (vehicleMarkers[vehicle.id]) {
+              vehicleMarkers[vehicle.id].setPosition(position);
+            } else {
+              vehicleMarkers[vehicle.id] = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: `${vehicle.type} - ${vehicle.id}`,
+              });
+            }
+          });
+        })
+        .catch((error) =>
+          console.error("Erreur lors de la récupération des positions:", error)
+        );
+    }
+
+    setInterval(updateVehiclePositions, 5000); // Mise à jour toutes les 5 secondes
+  }
+</script>
+{% endblock %}

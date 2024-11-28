@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}EasyRide - Confirmation de la course{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center text-primary">Confirmation de la Course</h2>
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Détails de la Course</h3>
+      <p><strong>Départ :</strong> <span id="pickup">{{ pickup }}</span></p>
+      <p><strong>Destination :</strong> <span id="destination">{{ destination }}</span></p>
+      <p><strong>Type de Véhicule :</strong> <span id="vehicle">{{ vehicle }}</span></p>
+      <p><strong>Prix :</strong> <span id="price">{{ price }}</span>$</p>
+      <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
+
+      <!-- Bouton de paiement Stripe -->
+      <button id="checkout-button" class="btn btn-primary mt-4">
+        Payer par Stripe
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialisation de Stripe avec la clé publique
+    const stripe = Stripe("{{ key }}"); // Clé publique passée depuis la vue Django
+
+    // Ajouter un gestionnaire d'événements au bouton
+    document
+      .getElementById("checkout-button")
+      .addEventListener("click", function () {
+        stripe
+          .redirectToCheckout({
+            sessionId: "{{ stripe_session_id }}", // ID de session passé depuis la vue Django
+          })
+          .then(function (result) {
+            if (result.error) {
+              alert(result.error.message);
+            }
+          });
+      });
+  });
+</script>
+
+
+<!-- Script Google Maps -->
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdS-b3HBY7uprOXdV34wTgYJW1tSWGn0s&callback=initMap"
+  async
+  defer
+></script>
+<script>
+  function initMap() {
+    const pickup = "{{ pickup }}";
+    const destination = "{{ destination }}";
+
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 7,
+      center: { lat: 48.8566, lng: 2.3522 }, // Position par défaut (Paris)
+    });
+
+    directionsRenderer.setMap(map);
+
+    directionsService.route(
+      {
+        origin: pickup,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === "OK") {
+          directionsRenderer.setDirections(response);
+        } else {
+          alert("Erreur : Impossible de calculer l'itinéraire. " + status);
+        }
+      }
+    );
+  }
+</script>
+
+{% endblock %}

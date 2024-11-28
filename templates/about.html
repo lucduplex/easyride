@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}EasyRide - À propos de nous{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>À propos de nous</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead text-center">
+                        Notre mission est de faciliter la mobilité pour tous. Que vous soyez en pleine forme ou que vous ayez des besoins spécifiques, nous nous engageons à rendre la transportation accessible, rapide, et abordable.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 1: Accessibilité -->
+            <div class="card shadow-lg mb-4">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/Transportation_For_All.jpg' %}" class="card-img" alt="Accessibilité">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Accessibilité pour tous</h5>
+                            <p class="card-text">
+                                Nous visons à rendre la mobilité accessible pour tout le monde, y compris les personnes ayant des conditions qui ne leur permettent pas de se déplacer facilement. Nos services incluent des options adaptées pour les personnes à mobilité réduite.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Prix raisonnables -->
+            <div class="card shadow-lg mb-4">
+                <div class="row no-gutters flex-md-row-reverse">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/Affordable.jpg' %}" class="card-img" alt="Prix raisonnables">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Prix raisonnables</h5>
+                            <p class="card-text">
+                                Nous offrons des tarifs compétitifs et transparents pour garantir que nos services de transportation soient accessibles à tous, sans compromettre la qualité.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Suivi en temps réel -->
+            <div class="card shadow-lg mb-4">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/suivi_en_temps_reel.jpg' %}" class="card-img" alt="Suivi en temps réel">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Suivi en temps réel</h5>
+                            <p class="card-text">
+                                Les utilisateurs peuvent suivre leur trajet sur une carte en temps réel et voir les véhicules disponibles à proximité. Cette fonctionnalité permet de planifier les trajets avec plus de précision.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Notes et avis -->
+            <div class="card shadow-lg mb-4">
+                <div class="row no-gutters flex-md-row-reverse">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/Noter.jpg' %}" class="card-img" alt="Notes et avis">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Notes et avis</h5>
+                            <p class="card-text">
+                                Les utilisateurs peuvent noter leur course et les chauffeurs, ce qui nous permet d'améliorer constamment notre service. Vos commentaires nous aident à offrir une meilleure expérience à tous.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Historique des trajets -->
+            <div class="card shadow-lg mb-4">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/Historique.jpg' %}" class="card-img" alt="Historique des trajets">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Historique des trajets</h5>
+                            <p class="card-text">
+                                Les utilisateurs peuvent consulter l'historique de leurs trajets pour voir les courses précédentes et les détails associés. Cela permet de suivre facilement les dépenses et les déplacements.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Service 24h/24h -->
+            <div class="card shadow-lg mb-4">
+                <div class="row no-gutters flex-md-row-reverse">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/open_24.jpg' %}" class="card-img" alt="Service 24h/24h">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Service 24h/24h</h5>
+                            <p class="card-text">
+                                Nous sommes disponibles 24h/24h pour répondre à vos besoins en matière de transportation, peu importe l'heure. Notre service reste fiable et ponctuel, même tard dans la nuit.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Qualité de service excellente -->
+            <div class="card shadow-lg mb-4">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/Service_Quality.jpg' %}" class="card-img" alt="Qualité de service">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Qualité de service excellente</h5>
+                            <p class="card-text">
+                                La qualité est notre priorité. Nous nous efforçons d'offrir des services de transportation exceptionnels, avec des chauffeurs professionnels et des véhicules bien entretenus pour garantir votre confort.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Programme de récompenses -->
+            <div class="card shadow-lg mb-4">
+                <div class="row no-gutters flex-md-row-reverse">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/Programme_De_Recompense.jpg' %}" class="card-img" alt="Programme de récompenses">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Programme de récompenses</h5>
+                            <p class="card-text">
+                                Notre programme de fidélité vous permet de gagner des points à chaque course, que vous pouvez échanger contre des réductions, des trajets gratuits ou d'autres récompenses. 
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

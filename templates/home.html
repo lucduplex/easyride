@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}EasyRide - Transport rapide et sécurisé{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <!-- Jumbotron -->
+  <div class="jumbotron text-center bg-dark text-white py-5 rounded">
+    <h1 class="display-4">Bienvenue sur EasyRide</h1>
+    <p class="lead">
+      Votre solution pour un transport facile, rapide et sécurisé.
+    </p>
+    <a href="{% url 'book_ride' %}" class="btn btn-light btn-lg me-3">Réserver une course</a>
+    <a href="{% url 'about' %}" class="btn btn-outline-light btn-lg">En savoir plus</a>
+  </div>
+
+  <!-- Row with reservation form and image -->
+  <div class="row align-items-center mt-5">
+    <!-- Formulaire de réservation (Left Side) -->
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4">
+        <h2 class="text-center text-dark">Réservez ou planifiez une course</h2>
+        <p class="text-muted text-center mb-4">Ajoutez les détails de votre course, montez à bord et c'est parti !</p>
+
+        <form method="post" action="{% url 'order_ride' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="pickup" class="form-label">Adresse de départ</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="pickup"
+                  name="pickup"
+                  placeholder="Entrez votre adresse de départ"
+                  required
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-dark"
+                  onclick="useCurrentLocation('pickup')"
+                >
+                  <i class="fas fa-map-marker-alt"></i> Ma position
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="destination" class="form-label">Adresse de destination</label>
+              <input
+                type="text"
+                class="form-control"
+                id="destination"
+                name="destination"
+                placeholder="Entrez votre destination"
+                required
+              />
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-dark">Voir les prix</button>
+              <a href="{% url 'book_ride' %}" class="btn btn-secondary">Planifier pour plus tard</a>
+            </div>
+          </form>
+      </div>
+    </div>
+
+    <!-- Image (Right Side) -->
+    <div class="col-md-6 text-center">
+      <img
+        src="{% static 'images/Acceuil.png' %}"
+        class="img-fluid rounded"
+        alt="Illustration de transport"
+      />
+    </div>
+  </div>
+
+  <!-- Services principaux -->
+  <div class="row mt-5 text-center">
+    <h2 class="mb-4 text-dark">Nos services</h2>
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm bg-light">
+        <img
+          src="{% static 'images/reservation.webp' %}"
+          class="card-img-top"
+          alt="Réserver une course"
+        />
+        <div class="card-body">
+          <h5 class="card-title text-dark">Réserver une course</h5>
+          <p class="card-text text-muted">
+            Réservez une course en toute simplicité. Nos chauffeurs sont prêts à
+            vous conduire où vous voulez, quand vous voulez.
+          </p>
+          <a href="{% url 'book_ride' %}" class="btn btn-outline-dark">Réserver maintenant</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm bg-light">
+        <img
+          src="{% static 'images/suivi_en_temps_reel.jpg' %}"
+          class="card-img-top"
+          alt="Suivi des véhicules"
+        />
+        <div class="card-body">
+          <h5 class="card-title text-dark">Suivi des véhicules</h5>
+          <p class="card-text text-muted">
+            Suivez les véhicules disponibles près de vous en temps réel et
+            choisissez celui qui vous convient.
+          </p>
+          <a href="{% url 'vehicle_tracking' %}" class="btn btn-outline-dark">Voir les véhicules</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm bg-light">
+        <img
+          src="{% static 'images/Noter.jpg' %}"
+          class="card-img-top"
+          alt="Noter un chauffeur"
+        />
+        <div class="card-body">
+          <h5 class="card-title text-dark">Noter un chauffeur</h5>
+          <p class="card-text text-muted">
+            Après chaque course, évaluez votre expérience avec votre chauffeur
+            pour nous aider à améliorer nos services.
+          </p>
+
+          {% if reservations %}
+            {% for reservation in reservations %}
+              <a
+                href="{% url 'rate_ride' reservation_id=reservation.id %}"
+                class="btn btn-outline-dark mb-2"
+              >
+                Noter la course de {{ reservation.start_point }} à {{ reservation.destination }}
+              </a>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">Aucune réservation disponible pour évaluation.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Témoignages -->
+  <div class="row mt-5 text-center">
+    <h2 class="mb-4 text-dark">Ce que disent nos clients</h2>
+    <div class="col-md-4">
+      <blockquote class="blockquote bg-light p-4 rounded shadow-sm">
+        <p class="mb-4">
+          "EasyRide m'a permis de réserver une course en moins d'une minute.
+          Très pratique et rapide !"
+        </p>
+        <footer class="blockquote-footer">Florinda</footer>
+      </blockquote>
+    </div>
+    <div class="col-md-4">
+      <blockquote class="blockquote bg-light p-4 rounded shadow-sm">
+        <p class="mb-4">
+          "J'adore la fonctionnalité de géolocalisation. Je peux voir les
+          véhicules près de chez moi en temps réel."
+        </p>
+        <footer class="blockquote-footer">Duplex</footer>
+      </blockquote>
+    </div>
+    <div class="col-md-4">
+      <blockquote class="blockquote bg-light p-4 rounded shadow-sm">
+        <p class="mb-4">
+          "Noter les chauffeurs est une super idée. Cela garantit une bonne
+          qualité de service."
+        </p>
+        <footer class="blockquote-footer">Brithney</footer>
+      </blockquote>
+    </div>
+  </div>
+</div>
+
+<!-- Script pour obtenir la géolocalisation et convertir en adresse -->
+<script>
+  function getLocation(callback) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(callback, showError);
+    } else {
+      alert("La géolocalisation n'est pas prise en charge par ce navigateur.");
+    }
+  }
+
+  function useCurrentLocation(inputId) {
+    getLocation(function (position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      fetch("/geolocate/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: `latitude=${latitude}&longitude=${longitude}`,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById(inputId).value = data.address;
+        })
+        .catch((error) => console.error("Erreur:", error));
+    });
+  }
+
+  function showError(error) {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        alert("L'utilisateur a refusé la demande de géolocalisation.");
+        break;
+      case error.POSITION_UNAVAILABLE:
+        alert("Les informations de localisation ne sont pas disponibles.");
+        break;
+      case error.TIMEOUT:
+        alert("La demande de localisation a expiré.");
+        break;
+      case error.UNKNOWN_ERROR:
+        alert("Une erreur inconnue s'est produite.");
+        break;
+    }
+  }
+</script>
+
+{% endblock %}

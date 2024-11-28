@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}EasyRide - Historique de Commandes et Réservations{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center text-primary mb-4">Historique des Courses et Réservations</h2>
+  
+  <!-- Sélecteur pour choisir le type d'historique -->
+  <div class="form-group">
+    <label for="orderType" class="form-label">Choisir l'historique à afficher :</label>
+    <select
+      class="form-control"
+      id="orderType"
+      onchange="showOrders(this.value)"
+    >
+      <option value="" disabled selected>Choisir une option</option>
+      <option value="reservations">Historique des Réservations</option>
+      <option value="rideOrders">Historique des Courses</option>
+    </select>
+  </div>
+
+  <!-- Conteneur pour afficher les commandes ou réservations -->
+  <div id="ordersContainer" class="mt-4">
+    <p class="text-muted text-center">Sélectionnez une option pour afficher l'historique.</p>
+  </div>
+</div>
+
+<script>
+  // Fonction pour récupérer et afficher les données
+  function showOrders(orderType) {
+    if (!orderType) return;
+
+    // Effectue une requête fetch pour récupérer les données de l'historique
+    fetch(`/my_orders/${orderType}/`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erreur lors du chargement des données");
+        }
+        return response.text();
+      })
+      .then((data) => {
+        document.getElementById("ordersContainer").innerHTML = data;
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+        document.getElementById("ordersContainer").innerHTML =
+          '<p class="text-danger text-center">Impossible de charger les données. Veuillez réessayer plus tard.</p>';
+      });
+  }
+</script>
+{% endblock %}
